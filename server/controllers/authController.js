@@ -82,7 +82,7 @@ export const forgotPassword = async (req, res) => {
 
     const user = await User.findOne({ email: email.toLowerCase().trim() });
 
-    // 🔒 SECURITY: agar user na mile bhi, same response do
+    // SECURITY: agar user na mile bhi, same response do
     // Warna attacker pata kar lega ki kaunsa email registered hai
     if (!user) {
       return res.status(StatusCodes.OK).json({

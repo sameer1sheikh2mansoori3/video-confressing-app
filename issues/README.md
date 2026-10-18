@@ -165,29 +165,7 @@ Is directory (`issues/`) mein aapke Video Conferencing App ke backend authentica
 
 ---
 
-## Issue 5: Dotenv Path Resolution across Working Directories
 
-### 📌 Symptoms
-- Jab server root folder (`/video confrensing app`) se start hota hai to `.env` variables `undefined` aate hain, jabki `server/` folder se start karne par work karte hain.
-
-### 🔍 Root Cause Analysis (RCA)
-- `dotenv.config('');` default behavior `process.cwd()` (current working directory) par depend karta hai.
-- Agar terminal ka current directory `server/` nahi hota, to `dotenv` ko `.env` file nahi milti.
-
-### 🛠️ Steps to Fix
-- In `server/server.js` and `server/utils/sendEmail.js`, absolute path resolution use karein:
-  ```javascript
-  import path from 'path';
-  import { fileURLToPath } from 'url';
-
-  const __filename = fileURLToPath(import.meta.url);
-  const __dirname = path.dirname(__filename);
-
-  dotenv.config();
-  dotenv.config({ path: path.resolve(__dirname, './.env') });
-  ```
-
----
 
 ## Issue 6: Signup Duplicate Key Handling (Username vs Email)
 
