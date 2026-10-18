@@ -20,6 +20,10 @@ A real-time video conferencing app built with **React, Node.js, WebRTC and Socke
 - [ ] Random chats 
 - [ ] Chats on basis of interest
 - [ ] Horizonatlly Scalling
+- [ ] Aws deployment
+- [ ] CICD pipeline
+- [ ] OpenApi Specs
+
 
 ## 🛠 Tech Stack
 

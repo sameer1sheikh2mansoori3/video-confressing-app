@@ -4,7 +4,14 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 
-dotenv.config('');
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, './.env') });
 
 const app = express();
 
@@ -18,9 +25,17 @@ app.use('/api/auth', authRoutes);
 // MongoDB Connection
 const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGO_URI)
-  .then(() => app.listen(PORT, () => console.log(`Server running on port: ${PORT}`)))
+  .then(() => app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`);
+     console.log('🔍 ENV CHECK:', {
+  host: process.env.SMTP_HOST,
+  user: JSON.stringify(process.env.SMTP_USER),   // quotes dikhayenge spaces
+  pass: process.env.SMTP_PASS ? `set (${process.env.SMTP_PASS.length} chars)` : 'MISSING',
+});
+  }))
   .catch((error) => 
 {
+ 
     console.error("Database connection failed:", error.message)
     console.log(`Server running on port: ${process.env.PORT}, but database connection failed.`)
 });

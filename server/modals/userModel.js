@@ -14,8 +14,8 @@ const userSchema = new Schema(
     username: {
       type: String,
       required: [true, 'Username is required'],
-      unique: true,           
-      lowercase: true,        
+      unique: true,
+      lowercase: true,
       trim: true,
       minlength: [3, 'Username must be at least 3 characters'],
       maxlength: [20, 'Username cannot exceed 20 characters'],
@@ -23,7 +23,7 @@ const userSchema = new Schema(
         /^[a-z0-9_.]+$/,
         'Username can only contain lowercase letters, numbers, underscore and dot',
       ],
-      index: true,           
+      index: true,
     },
 
     email: {
@@ -46,6 +46,16 @@ const userSchema = new Schema(
       type: String,
       default: '',            // optional field
       trim: true,
+    },
+
+    passwordResetToken: {
+      type: String,
+      select: false,          // query me by default nahi aayega
+    },
+
+    passwordResetExpires: {
+      type: Date,
+      select: false,          // token ke saath hi fetch karenge
     },
   },
   {
