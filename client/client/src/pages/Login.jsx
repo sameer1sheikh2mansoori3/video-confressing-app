@@ -5,16 +5,21 @@ import SharedButton from "../shared/ui/Button";
 import TextField from "@mui/material/TextField";
 import SharedInput from "../shared/ui/Input";
 import Stack from "@mui/material/Stack";
+import OutlinedAlerts from "../shared/ui/Alert";
+import AlertMessage from "../shared/ui/Alert";
 
 export default function Login() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [openAlert, setOpenAlert] = useState(true);
+    
+
     const login = useAuthStore((state) => state.login);
     const token = useAuthStore((state) => state.token);
     const isLoading = useAuthStore((state) => state.isLoading);
 
-    const [error, setError] = useState("");
+    const [error, setError] = useState(null);
 
     const [form, setForm] = useState({
         email: "",
@@ -56,8 +61,15 @@ export default function Login() {
                     <p>{location.state.message}</p>
                 )}
 
-                {error && <p className="error">{error}</p>}
-<Stack sx={{ width: "70%" }} spacing={2}>
+                {
+                    <AlertMessage
+                        open={true && error}
+                        variant="outlined"
+                        severity="error"
+                        message={error}
+                        onClose={() => setError("")}
+                    />
+                }
                 <SharedInput
                     label={"please enter email"}
                     error={!!error}
@@ -89,11 +101,11 @@ export default function Login() {
                 <SharedButton
                     type="submit"
                     disabled={isLoading}
-                    size="small"
+                    size="medium"
                 >
                     {isLoading ? "Logging in..." : "Log in"}
                 </SharedButton>
-</Stack>
+
                 <p>
                     New here? <Link to="/signup">Create an account</Link>
                 </p>
