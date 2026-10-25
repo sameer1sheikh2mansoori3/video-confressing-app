@@ -23,7 +23,7 @@ app.use("/api/v1/auth",authRouter);
 
 const start = async () => {
     app.set("mongo_user")
-    const connectionDb = await mongoose.connect(`mongodb+srv://sameersheikhmansoori:kKP9icZZROb27hHE@cluster0.wkynkce.mongodb.net/videochat?retryWrites=true&w=majority`)
+    const connectionDb = await mongoose.connect(`${process.env.MONGO_URI}`)
 
     console.log(`MONGO Connected DB HOst: ${connectionDb.connection.host}`)
     server.listen(app.get("port"), () => {
