@@ -1,2 +1,4 @@
 .env
 server/node_modules
+client/node_modules
+client/client/src/testComponents/testComponent.jsx
