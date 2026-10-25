@@ -1,6 +1,9 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 function NotFound() {
+  const navigate = useNavigate();
+
   return (
     <div style={styles.page}>
       {/* Navbar */}
@@ -8,9 +11,8 @@ function NotFound() {
         <div style={styles.brand}>MyApp</div>
 
         <div style={styles.navRight}>
-          <button style={styles.guestBtn}>Continue as Guest</button>
-          <button style={styles.loginBtn}>Login</button>
-          <button style={styles.signupBtn}>Sign Up</button>
+          <button style={styles.loginBtn} onClick={() => navigate("/login")}>Login</button>
+          <button style={styles.signupBtn} onClick={() => navigate("/signup")}>Sign Up</button>
         </div>
       </nav>
 

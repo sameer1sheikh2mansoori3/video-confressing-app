@@ -19,20 +19,21 @@ function ProductTab() {
         console.log(value);
         setTaskName(value.target.value)
     }
-    const onSubmit = (e)=>{
-        if(taskName.trim() === ''){
-            alert("value to de do bsdk")
+    const onSubmit = (e) => {
+        e.preventDefault();
+        if (taskName.trim() === '') {
+            alert("Enter a task name.");
             return;
         }
-        e.preventDefault();
-        setTaskArr(
-            [...taskArr , {
-                taskName:taskName,
-                isCompleted : isCompleted
-            }
-        ]
-        )
-        valueDedo(taskArr);
+        const newTaskArr = [
+            ...taskArr,
+            {
+                taskName: taskName,
+                isCompleted: isCompleted,
+            },
+        ];
+        setTaskArr(newTaskArr);
+        valueDedo(newTaskArr);
         setTaskName("");
     }
     const toggleTaskStatus = (indexOfArr) =>{
@@ -61,7 +62,7 @@ function ProductTab() {
             taskArr.map((value , index)=><>
             <div key={index}>
                 <h1>{value.taskName}</h1>
-                <div onClick={()=>toggleTaskStatus(index)}>{value.isCompleted ? "complete ho gya" : "nhi hua"}</div>
+                <button type="button" onClick={() => toggleTaskStatus(index)} aria-label={value.isCompleted ? "Completed" : "Incomplete"}>{value.isCompleted ? "Completed" : "Incomplete"}</button>
             </div>
             </>)
         }

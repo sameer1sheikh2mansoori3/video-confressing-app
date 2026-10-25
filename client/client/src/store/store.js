@@ -37,7 +37,6 @@ export const useAuthStore = create(
           });
 
           set({
-            user: sanitizeUser(response.data.user),
             isLoading: false,
             error: null,
           });

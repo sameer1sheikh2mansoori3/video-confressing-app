@@ -1,34 +1,38 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
-import axios from 'axios';
+import React, { createContext, useContext, useState } from "react";
+import api from "../api/axios";
+
 const AuthContext = createContext(null);
-import { Backend_url } from "../../url";
 
 export function AuthProvider({ children }) {
-    
-   const [formData, setFormData] = useState({
+  const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState({
     username: '',
     email: '',
     password: '',
   });
-  const [notification , setNotification] = ("");
-  const [loading , setLoading] = useState(false);
+  const [notification, setNotification] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const signUp = async()=>{
-     //   true loading per buttton disable kr do
-        setLoading(1);
-      const responseFromBackend =  await axios.post( `${Backend_url}/api/auth/signup` , data);
-      if(responseFromBackend.data.statusCode === 200){
-          setNotification("User signUp successfully")
-          setFormData(responseFromBackend.data.user); 
-        //   on succesful signup do routing 
-      }else if(responseFromBackend.data.statusCode === 401){
-          setNotification("Please Change Your UserName");
-      }else{
-        setNotification("SomeThing Went Wrong Please Try Again !!!")
-      }
-       setLoading(0);
-  }
-  
+  const signup = async () => {
+    //   true loading per buttton disable kr do
+    setLoading(true);
+    const responseFromBackend = await api.post("/auth/signup", formData);
+    if (responseFromBackend.data.statusCode === 200) {
+      setNotification("User signUp successfully");
+      setFormData(responseFromBackend.data.user);
+      //   on succesful signup do routing
+    } else if (responseFromBackend.data.statusCode === 401) {
+      setNotification("Please Change Your UserName");
+    } else {
+      setNotification("SomeThing Went Wrong Please Try Again !!!");
+    }
+    setLoading(false);
+  };
+
+  const login = (userData = null) => {
+    setUser(userData);
+  };
+
   // Guest
   const guestLogin = () => {
     setUser({ name: "Guest", username: "guest", isGuest: true });
