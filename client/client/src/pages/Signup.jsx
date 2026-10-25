@@ -1,6 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/store";
+import SharedInput from "../shared/ui/Input";
+import SharedButton from "../shared/ui/Button";
+import AlertMessage from "../shared/ui/Alert";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -41,10 +44,19 @@ export default function Signup() {
       <form className="auth-form" onSubmit={handleSubmit}>
         <h1>Create account</h1>
 
-        {error && <p className="error">{error}</p>}
+        {  
+          <AlertMessage
+            open={true && error}
+            variant="outlined"
+            severity="error"
+            message={error}
+            onClose={()=>setError("")}
+          />
+        }
+            
 
         <label htmlFor="username">Username</label>
-        <input
+        <SharedInput
           id="username"
           name="username"
           value={form.username}
@@ -53,8 +65,8 @@ export default function Signup() {
           required
         />
 
-        <label htmlFor="email">Email</label>
-        <input
+        
+        <SharedInput
           id="email"
           name="email"
           type="email"
@@ -64,8 +76,7 @@ export default function Signup() {
           required
         />
 
-        <label htmlFor="password">Password</label>
-        <input
+        <SharedInput
           id="password"
           name="password"
           type="password"
@@ -75,9 +86,13 @@ export default function Signup() {
           required
         />
 
-        <button type="submit" disabled={isLoading}>
+        <SharedButton
+          type="submit"
+          disabled={isLoading}
+          size="medium"
+        >
           {isLoading ? "Creating account..." : "Sign up"}
-        </button>
+        </SharedButton>
 
         <p>
           Already registered? <Link to="/login">Log in</Link>
