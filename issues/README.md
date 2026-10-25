@@ -197,7 +197,64 @@ Is directory (`issues/`) mein aapke Video Conferencing App ke backend authentica
 
 ---
 
+## Issue 7: Socket.IO Room Not Creating / Nothing Logged (Dual Port & Immediate Disconnect Bug)
+
+### 📌 Symptoms
+- Browser mein form submit karne par server terminal par kuch bhi print/log nahi ho raha tha.
+- Room join nahi ho raha tha aur events deliver nahi ho rahe the.
+
+### 🔍 Root Cause Analysis (RCA)
+1. **Connection Par Hi Instant Disconnect**:
+   - `server/server.js` mein `io.on('connection')` ke andar yeh line likhi thi:
+     ```javascript
+     // ❌ BUG:
+     socket.disconnect(
+       socket.leave('some room')
+     );
+     ```
+   - Jaise hi koi browser client connect hota tha, server use connect hote hi agle microsecond disconnect kar deta tha! Is wajah se client ka koi bhi `socket.emit` server tak pahunch hi nahi pata tha.
+2. **`socket.join()` Missing Tha**:
+   - Room join karne ka code tha hi nahi. Sirf `socket.leave('some room')` likha tha.
+3. **Do Alag Ports Ka Conflict (`app.listen` vs `server.listen`)**:
+   - `mongoose.connect()` ke andar `app.listen(PORT)` (port 5000) chal raha tha.
+   - Socket.IO HTTP server par `server.listen(4000)` alag se chal raha tha.
+   - Jab user browser mein `http://localhost:5000` open karta tha, to page Express se 5000 par load hota tha, lekin wahan Socket.IO attached hi nahi tha!
+4. **Duplicate Routes**:
+   - Express mein do jagah `app.get('/')` define tha.
+
+### 🛠️ Steps to Fix
+1. `socket.disconnect(...)` ko remove kiya gaya.
+2. `socket.join(roomId)` add kiya gaya taaki user officially room ka part bane.
+3. `app.listen(PORT)` aur `server.listen(4000)` ko hata kar ek single `server.listen(PORT)` kiya gaya taaki Express HTTP aur Socket.IO WebSockets dono same port (5000) par smoothly chalein.
+4. `dummyHtml/index.html` mein event feedback aur connection status listeners add kiye gaye.
+---
+
+## Issue 8: React Client TypeScript Errors in `App.tsx`
+
+### 📌 Symptoms
+- `client/client/src/App.tsx` mein red squiggly lines / TypeScript errors show ho rahe the (`Cannot find module 'react'`, `Cannot find module './assets/...'`, etc.).
+- Build run karne par errors:
+  - `ERESOLVE unable to resolve dependency tree: Found typescript@7.0.2, peer typescript@">=4.8.4 <6.1.0"`.
+  - `error TS5023: Unknown compiler option 'erasableSyntaxOnly'`.
+
+### 🔍 Root Cause Analysis (RCA)
+1. **`node_modules` Not Installed**:
+   - `npm create vite@latest client` run karne ke baad `npm install` run nahi hua tha (ya dependency conflict ki wajah se fail ho gaya tha), jisse `@types/react` aur `react` types missing the.
+2. **Invalid `"typescript": "~7.0.2"` in `package.json`**:
+   - `package.json` mein TypeScript version `~7.0.2` set tha jo `typescript-eslint` ke peer dependency limit (`<6.1.0`) ko tod raha tha aur `npm install` ko crash kar raha tha.
+3. **Unknown Compiler Option `erasableSyntaxOnly`**:
+   - `tsconfig.app.json` aur `tsconfig.node.json` mein `erasableSyntaxOnly: true` compiler option use ho raha tha jo TypeScript 5.7 ke sath incompatible tha.
+
+### 🛠️ Steps to Fix
+1. In `client/client/package.json`, TypeScript version ko `~5.7.2` par align kiya gaya.
+2. `client/client` folder mein `npm install` run kiya gaya.
+3. `tsconfig.app.json` aur `tsconfig.node.json` se `erasableSyntaxOnly: true` remove kiya gaya.
+4. `npm run build` verify kiya gaya (`tsc -b && vite build` passed successfully in 321ms).
+
+---
+
 ## 🧪 Complete API Testing & Verification Guide
+
 
 ### 1. User Signup
 ```bash

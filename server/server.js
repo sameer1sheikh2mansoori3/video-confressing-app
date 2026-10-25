@@ -1,34 +1,39 @@
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import authRoutes from './routes/authRoutes.js';
-dotenv.config({ path: 'server/.env' });
+import express from "express";
+import { createServer } from "node:http";
+
+import { Server } from "socket.io";
+
+import mongoose from "mongoose";
+import { connectToSocket } from "./controllers/socketManager.js";
+import authRouter from "./routes/authRoutes.js";
+import cors from "cors";
 
 
 const app = express();
+const server = createServer(app);
+const io = connectToSocket(server);
 
-// Middleware
-app.use(cors());
-app.use(express.json()); // Parses incoming JSON payloads
 
-// Mount Routes
-app.use('/api/auth', authRoutes);
+app.set("port", (process.env.PORT || 8000))
+app.use(cors("*"));
+app.use(express.json({ limit: "40kb" }));
+app.use(express.urlencoded({ limit: "40kb", extended: true }));
 
-// MongoDB Connection
-const PORT = process.env.PORT || 5000;
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => app.listen(PORT, () => {
-    console.log(`Server running on port: ${PORT}`);
-     console.log('🔍 ENV CHECK:', {
-  host: process.env.SMTP_HOST,
-  user: JSON.stringify(process.env.SMTP_USER),   // quotes dikhayenge spaces
-  pass: process.env.SMTP_PASS ? `set (${process.env.SMTP_PASS.length} chars)` : 'MISSING',
-});
-  }))
-  .catch((error) => 
-{
- 
-    console.error("Database connection failed:", error.message)
-    console.log(`Server running on port: ${process.env.PORT}, but database connection failed.`)
-});
+app.use("/api/v1/auth",authRouter);
+
+const start = async () => {
+    app.set("mongo_user")
+    const connectionDb = await mongoose.connect(`mongodb+srv://sameersheikhmansoori:kKP9icZZROb27hHE@cluster0.wkynkce.mongodb.net/videochat?retryWrites=true&w=majority`)
+
+    console.log(`MONGO Connected DB HOst: ${connectionDb.connection.host}`)
+    server.listen(app.get("port"), () => {
+        console.log("LISTENIN ON PORT 8000")
+    });
+
+
+
+}
+
+
+
+start();
